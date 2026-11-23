@@ -1918,3 +1918,22 @@ $("#logBtn").addEventListener("click",()=>cfgEl.classList.remove("on"));;
   };
   setInterval(addRow, 1000);
 })();
+
+/* ===== 画像メニューの対策（画像の上に、ブラウザの検索メニューが出ないようにする） ===== */
+(function() {
+  const st = document.createElement("style");
+  st.textContent = "img{pointer-events:none;-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}";
+  document.head.appendChild(st);
+
+  // 莉央をタップしたときの反応は、画像がタップを受けない代わりに、画像の範囲のタップをここで拾う
+  const h = document.querySelector("#hinata");
+  const stage = h && h.parentElement;
+  if (!stage) return;
+  stage.addEventListener("click", (e) => {
+    if (e.target !== stage) return;                       // 時計・ログなど、ほかの部品を押したときは、何もしない
+    const r = h.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;
+    if (getComputedStyle(h).visibility === "hidden") return;   // 莉央を隠しているとき
+    if (typeof h.onclick === "function") h.onclick(e);
+  });
+})();
